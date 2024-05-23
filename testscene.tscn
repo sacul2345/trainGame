@@ -1,0 +1,80 @@
+[gd_scene load_steps=13 format=3 uid="uid://83gt4h0u48jd"]
+
+[ext_resource type="Texture2D" uid="uid://dih730ofs748m" path="res://debugtexture.png" id="1_tm1tm"]
+[ext_resource type="PackedScene" uid="uid://cty6bsm1d4sia" path="res://blender/stations.blend" id="2_qdhe3"]
+[ext_resource type="PackedScene" uid="uid://bbw14af8vq5nb" path="res://blender/tracks.blend" id="3_2jkny"]
+[ext_resource type="PackedScene" uid="uid://jv3ohlndh15u" path="res://blender/Train.blend" id="4_3orec"]
+[ext_resource type="Script" path="res://moveCam.gd" id="5_djfc3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lu7ph"]
+albedo_color = Color(0.701168, 0.929662, 0.658002, 1)
+albedo_texture = ExtResource("1_tm1tm")
+uv1_scale = Vector3(13.99, 13.99, 13.99)
+texture_filter = 0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_krb8d"]
+material = SubResource("StandardMaterial3D_lu7ph")
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_o3y0j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_12von"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1661s"]
+sky_top_color = Color(0.310708, 0.453119, 0.657528, 1)
+sky_horizon_color = Color(0.567903, 0.672593, 0.739333, 1)
+sky_curve = 0.45471
+sun_curve = 0.487354
+
+[sub_resource type="Sky" id="Sky_euic3"]
+sky_material = SubResource("ProceduralSkyMaterial_1661s")
+
+[sub_resource type="Environment" id="Environment_044t2"]
+background_mode = 2
+background_color = Color(0.0380615, 0.066486, 0.174971, 1)
+sky = SubResource("Sky_euic3")
+ambient_light_source = 3
+tonemap_mode = 1
+tonemap_white = 1.5
+
+[node name="Map" type="Node3D"]
+
+[node name="Station" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Station"]
+transform = Transform3D(4.76, 0, 0, 0, 4.76, 0, 0, 0, 4.76, -0.00107098, -1.19209e-07, 0.00255096)
+mesh = SubResource("PlaneMesh_krb8d")
+skeleton = NodePath("StaticBody3D/CollisionShape3D")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Station/Floor"]
+physics_material_override = SubResource("PhysicsMaterial_o3y0j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Station/Floor/StaticBody3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 2.08165e-12, -1, 2.08165e-12)
+shape = SubResource("BoxShape3D_12von")
+
+[node name="stations" parent="Station" instance=ExtResource("2_qdhe3")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, 0.031912, -1.19209e-07, 0.373311)
+
+[node name="tracks" parent="Station" instance=ExtResource("3_2jkny")]
+transform = Transform3D(-3.49691e-09, 2.79029e-17, 0.08, 2.79029e-17, 0.08, -2.79029e-17, -0.08, 2.79029e-17, -3.49691e-09, 3.13097, 0.0131785, -0.835565)
+
+[node name="tracks2" parent="Station" instance=ExtResource("3_2jkny")]
+transform = Transform3D(-3.49691e-09, 2.79029e-17, 0.08, 2.79029e-17, 0.08, -2.79029e-17, -0.08, 2.79029e-17, -3.49691e-09, -0.549892, 0.0131785, -0.835565)
+
+[node name="Train" parent="Station" instance=ExtResource("4_3orec")]
+transform = Transform3D(-8.02799e-05, 0, 0.1, 0, 0.1, 0, -0.1, 0, -8.02799e-05, 0.0250767, -0.0131511, -0.843894)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Station"]
+transform = Transform3D(-0.66385, 0.440939, -0.604049, 0.116457, 0.858794, 0.49891, 0.738743, 0.260856, -0.621461, 0, 0.898015, 0)
+light_energy = 0.596
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.819152, -0.359405, 0.44701, 2.71823e-16, 0.779338, 0.626604, -0.573576, 0.513284, -0.638396, 1.444, 4.92, -2.756)
+projection = 1
+size = 3.14
+far = 96.77
+script = ExtResource("5_djfc3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_044t2")
